@@ -68,6 +68,9 @@ export class Engine {
     this.load = 0;
     this.starter = false;
 
+    // garage upgrades (0 or 1). Kept across resets.
+    this.mods = { port: 0, radiator: 0, ecu: 0, forged: 0 };
+
     this.reset();
   }
 
@@ -157,7 +160,7 @@ export class Engine {
     const omegaAbs = Math.abs(this.omega);
     // Resolve crank angle finely enough for combustion, capped for cost.
     const hMax = omegaAbs > 8 ? Math.min(0.0012, 0.030 / omegaAbs) : 0.0012;
-    let remaining = Math.min(dt, 0.05);
+    let remaining = Math.min(dt, 0.09);
     let guard = 0;
     while (remaining > 1e-7 && guard < 900) {
       const h = Math.min(remaining, hMax);
@@ -209,7 +212,7 @@ export class Engine {
     let dmOut = 0;
     let intakeFlow = 0;
     if (iv > 0) {
-      const area = PI * this.valveDia * iv * 0.86;
+      const area = PI * this.valveDia * iv * 0.86 * (1 + 0.18 * (this.mods?.port || 0));
       const mdot = orificeFlow(this.pm, p, this.tAmb, area);
       const equil = ((this.pm - p) * V) / (R * ((tCyl + this.tAmb) * 0.5));
       if (mdot > 0) {
@@ -340,7 +343,7 @@ export class Engine {
 
     // wall / coolant thermal inertia
     const qIntoWall = dQwall;
-    const qCool = 420 * (this.wallC - (this.tCoolant - 273.15));
+    const qCool = 420 * (this.wallC - (this.tCoolant - 273.15)) * (1 + 0.75 * (this.mods?.radiator || 0));
     this.wallC += ((qIntoWall - qCool) / 6000) * dt;
     this.wallC = clamp(this.wallC, 15, 190);
     this.oilC += ((this.wallC - this.oilC) * 0.12 - 0.015 * (this.oilC - 45)) * dt * 0.25;
@@ -350,7 +353,7 @@ export class Engine {
     // ---------------- knock ----------------
     const loadFrac = clamp((this.pm - 28000) / 72000, 0, 1);
     const heatFrac = clamp((this.wallC - 80) / 55, 0, 1.4);
-    this.knockLimit = 35 - 13 * loadFrac - 5 * heatFrac - 2.4 * clamp(this.omega / 700, 0, 1);
+    this.knockLimit = 35 - 13 * loadFrac - 5 * heatFrac - 2.4 * clamp(this.omega / 700, 0, 1) + 3.5 * (this.mods?.ecu || 0);
     let knockTarget = 0;
     if (this.burning && this.availableFuel > 0 && qComb > 0) {
       const over = this.advance - this.knockLimit;
@@ -428,14 +431,15 @@ export class Engine {
     this.intakePulse *= Math.exp(-dt * 9);
     this.eventTimer = Math.max(0, this.eventTimer - dt);
 
+    const dmgScale = 1 - 0.55 * (this.mods?.forged || 0);
     if (rpm > 7250) {
       this.overRev = Math.min(1, this.overRev + dt * 2);
-      this.health -= ((rpm - 7250) / 800) * 1.9 * dt;
+      this.health -= ((rpm - 7250) / 800) * 1.9 * dt * dmgScale;
     } else {
       this.overRev = Math.max(0, this.overRev - dt * 3);
     }
-    if (this.wallC > 116) this.health -= (this.wallC - 116) * 0.12 * dt;
-    if (this.knock > 0.22) this.health -= (this.knock - 0.2) * 5.5 * dt;
+    if (this.wallC > 116) this.health -= (this.wallC - 116) * 0.12 * dt * dmgScale;
+    if (this.knock > 0.22) this.health -= (this.knock - 0.2) * 5.5 * dt * dmgScale;
     this.health = clamp(this.health, 0, 100);
 
     if (this.health <= 0) {

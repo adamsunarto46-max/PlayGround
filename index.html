@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#080b0e" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23080b0e'/%3E%3Ctext x='32' y='43' font-family='Arial,sans-serif' font-size='27' font-weight='700' fill='%23f0b451' text-anchor='middle'%3ESC%3C/text%3E%3C/svg%3E" />
+  <title>Single Cylinder — Dyno Lab</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header id="topbar">
+      <div class="brand">
+        <div class="brand-mark">SC</div>
+        <div class="brand-text">
+          <div class="kicker">APEX DYNO LAB · CELL 04</div>
+          <div class="brand-name">SINGLE <span>CYLINDER</span></div>
+        </div>
+      </div>
+      <div id="stageTrack" class="stage-track" aria-label="Campaign progress"></div>
+      <div class="top-actions">
+        <div class="cash" title="Career earnings"><span>$</span><b id="cashValue">400</b></div>
+        <button id="soundBtn" class="icon-btn" type="button" aria-label="Toggle sound" title="Toggle sound">SND</button>
+        <button id="garageTopBtn" class="icon-btn" type="button" aria-label="Open garage" title="Garage">GAR</button>
+      </div>
+    </header>
+
+    <main id="workspace">
+      <section id="scenePanel" class="scene-panel">
+        <canvas id="scene" aria-label="Animated engine cutaway"></canvas>
+
+        <div class="scene-top">
+          <div id="stageCard" class="stage-card">
+            <div class="test-line"><span id="testNo">TEST 01</span><span id="testStatus" class="live">LIVE</span></div>
+            <h2 id="testName">FIRST BREATH</h2>
+            <p id="testBrief">Cold-start the engine and settle it into a stable idle.</p>
+            <div id="conditionList" class="conditions"></div>
+            <div class="progress-wrap">
+              <div class="progress"><i id="progressFill"></i></div>
+              <span id="progressLabel">0.0 / 6.0 s</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="coach" class="coach"><span class="coach-key">SPACE</span><span id="coachText">hold the starter, then feather the throttle</span></div>
+        <div id="toast" class="toast"></div>
+        <div class="scene-caption">
+          <span>LIVE CUTAWAY</span>
+          <span id="sceneClock">T+ 00:00</span>
+        </div>
+      </section>
+
+      <aside id="telemetry" class="telemetry">
+        <div class="tach-wrap">
+          <canvas id="tach" width="560" height="310"></canvas>
+          <div class="tach-read"><b id="rpmValue">0</b><small>RPM</small></div>
+        </div>
+
+        <div class="warning-row">
+          <span class="warn" id="warnStall">STALL</span>
+          <span class="warn" id="warnKnock">KNOCK</span>
+          <span class="warn" id="warnHeat">TEMP</span>
+          <span class="warn" id="warnRev">REV</span>
+        </div>
+
+        <div class="metrics">
+          <div class="metric"><span class="m-name">TORQUE</span><div class="m-bar"><i id="barTorque"></i></div><b id="valTorque">0.0</b><small>Nm</small></div>
+          <div class="metric"><span class="m-name">POWER</span><div class="m-bar"><i id="barPower"></i></div><b id="valPower">0.0</b><small>kW</small></div>
+          <div class="metric"><span class="m-name">COOLANT</span><div class="m-bar"><i id="barCoolant"></i></div><b id="valCoolant">22</b><small>°C</small></div>
+          <div class="metric"><span class="m-name">OIL</span><div class="m-bar"><i id="barOil"></i></div><b id="valOil">20</b><small>°C</small></div>
+          <div class="metric"><span class="m-name">MANIFOLD</span><div class="m-bar"><i id="barMap"></i></div><b id="valMap">101</b><small>kPa</small></div>
+          <div class="metric"><span class="m-name">KNOCK</span><div class="m-bar knock"><i id="barKnock"></i></div><b id="valKnock">0</b><small>%</small></div>
+        </div>
+
+        <div class="session">
+          <div class="s-item"><span>TEST CLOCK</span><b id="sessionTime">00:00</b></div>
+          <div class="s-item"><span>PEAK POWER</span><b id="sessionPeak">0.0</b><small>kW</small></div>
+          <div class="s-item"><span>PEAK TORQUE</span><b id="sessionTorque">0.0</b><small>Nm</small></div>
+          <div class="s-item"><span>CYCLES</span><b id="sessionCycles">0</b></div>
+        </div>
+
+        <div class="health">
+          <div class="health-head"><span>ENGINE HEALTH</span><b id="healthValue">100%</b></div>
+          <div class="health-bar"><i id="healthFill"></i></div>
+        </div>
+
+        <div class="telemetry-footer">
+          <span>449 cc · 4-STROKE</span>
+          <span id="cycleCount">0 CYCLES</span>
+        </div>
+      </aside>
+    </main>
+
+    <footer id="controlDeck">
+      <button id="starterBtn" class="starter" type="button" aria-label="Hold starter">
+        <span class="starter-icon"></span>
+        <span class="starter-copy"><b>IGNITION</b><small>HOLD TO CRANK</small></span>
+      </button>
+
+      <div class="ctrl-group">
+        <div class="ctrl-head"><label for="throttle">THROTTLE</label><output id="throttleVal">0%</output></div>
+        <input id="throttle" type="range" min="0" max="100" step="1" value="0" aria-label="Throttle" />
+        <div class="ctrl-hint">W / S</div>
+      </div>
+
+      <div class="ctrl-group">
+        <div class="ctrl-head"><label for="advance">IGNITION</label><output id="advanceVal">12°</output></div>
+        <input id="advance" type="range" min="0" max="40" step="1" value="12" aria-label="Ignition advance" />
+        <div class="ctrl-hint">A / D</div>
+      </div>
+
+      <div class="ctrl-group">
+        <div class="ctrl-head"><label for="load">DYNO LOAD</label><output id="loadVal">0%</output></div>
+        <input id="load" type="range" min="0" max="100" step="1" value="0" aria-label="Dyno load" />
+        <div class="ctrl-hint">Q / E</div>
+      </div>
+
+      <div class="deck-status">
+        <span id="deckState" class="deck-state">READY</span>
+        <span class="deck-tip">Hold <kbd>SPACE</kbd> to crank · tap gauges for units</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- title -->
+  <div id="titleScreen" class="overlay title-screen">
+    <div class="title-grid">
+      <div class="title-main">
+        <div class="title-kicker"><span></span>APEX DYNO LAB · TEST CELL 04</div>
+        <h1><span>SINGLE</span><span class="accent">CYLINDER</span></h1>
+        <div class="title-rule"></div>
+        <p class="title-sub">A physically simulated 449 cc four-stroke single.<br />Tune throttle, ignition and dyno load. Clear six test-cell records.<br /><em>Try not to seize it.</em></p>
+        <div class="title-features">
+          <div><b>01</b><span>REAL CRANK<br />DYNAMICS</span></div>
+          <div><b>02</b><span>THERMAL<br />DAMAGE</span></div>
+          <div><b>03</b><span>KNOCK<br />MODELLING</span></div>
+        </div>
+        <div class="title-cta">
+          <button id="startBtn" class="primary" type="button">START GAME</button>
+          <button id="titleGarageBtn" class="ghost" type="button">GARAGE</button>
+        </div>
+        <p id="titleSave" class="title-save">New career · six tests · stock SC-1</p>
+      </div>
+      <aside class="title-side">
+        <div class="side-head">TEST PROTOCOL</div>
+        <ol class="protocol">
+          <li><b>START</b><span>The starter auto-cranks. Release is automatic once the engine catches.</span></li>
+          <li><b>THROTTLE</b><span>Feeds the plenum. Idle sits just under 1000 rpm; full throttle revs to the limiter.</span></li>
+          <li><b>IGNITION</b><span>More advance makes torque — and detonation. Watch the knock meter.</span></li>
+          <li><b>DYNO LOAD</b><span>Holds the engine against the brake. Load + throttle sets the operating point.</span></li>
+        </ol>
+        <div class="side-keys">
+          <span><kbd>SPACE</kbd> starter</span><span><kbd>W</kbd><kbd>S</kbd> throttle</span>
+          <span><kbd>A</kbd><kbd>D</kbd> timing</span><span><kbd>Q</kbd><kbd>E</kbd> load</span>
+        </div>
+        <div class="side-note">Every gauge is driven by the simulation. No scripted torque curves.</div>
+      </aside>
+    </div>
+    <div class="title-footer">
+      <span>ENGINE: SC-1 · 84 × 80 mm · 449 cc · 10.5:1</span>
+      <span>PHYSICS: SLIDER-CRANK / SINGLE-ZONE / WIEBE</span>
+      <span>BUILD 1.0</span>
+    </div>
+  </div>
+
+  <!-- result -->
+  <div id="resultScreen" class="overlay hidden">
+    <div class="panel result-panel">
+      <div id="resultKicker" class="panel-kicker">TEST COMPLETE</div>
+      <h2 id="resultTitle">FIRST BREATH</h2>
+      <div id="resultMedal" class="medal gold">GOLD</div>
+      <p id="resultLine" class="result-line">Clean pass. The mule lives to fight another test.</p>
+      <div id="resultStats" class="result-stats"></div>
+      <div class="result-cash"><span>CAREER CREDIT</span><b id="resultCash">+$900</b></div>
+      <div class="panel-actions">
+        <button id="nextBtn" class="primary" type="button">NEXT TEST</button>
+        <button id="retryBtn" class="ghost hidden" type="button">RETRY TEST</button>
+        <button id="resultGarageBtn" class="ghost" type="button">GARAGE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- garage -->
+  <div id="garageScreen" class="overlay hidden">
+    <div class="panel garage-panel">
+      <div class="garage-head">
+        <div>
+          <div class="panel-kicker">APEX DYNO LAB</div>
+          <h2>GARAGE <span>&amp; TEST PLAN</span></h2>
+        </div>
+        <div class="garage-right">
+          <div class="cash large"><span>$</span><b id="garageCash">400</b></div>
+          <button id="garageCloseBtn" class="ghost" type="button">CLOSE</button>
+        </div>
+      </div>
+
+      <div class="garage-body">
+        <section class="test-plan">
+          <h3>TEST PLAN</h3>
+          <div id="stageList" class="stage-list"></div>
+        </section>
+        <section class="shop">
+          <h3>PARTS BIN <span>permanent upgrades</span></h3>
+          <div id="shopList" class="shop-list"></div>
+        </section>
+      </div>
+
+      <div class="garage-foot">
+        <p id="garageHint">Select a test, then load it onto the dyno.</p>
+        <button id="launchBtn" class="primary" type="button">LOAD TEST 01</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
