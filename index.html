@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#030814">
+  <meta name="description" content="APEX DYNO — a real-time interactive 2D engine simulator with procedural Web Audio acoustics, fluid dynamics and live diagnostics.">
+  <title>APEX // DYNO — Real-Time Engine Simulator</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='10' fill='%23071428'/%3E%3Cpath d='M24 6 40 15v18L24 42 8 33V15L24 6Z' fill='none' stroke='%2338bdf8' stroke-width='2'/%3E%3Cpath d='M19 17h10v3h-3.5v6H29v3H19v-3h3.5v-6H19v-3Z' fill='%2338bdf8'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <div class="ambient" aria-hidden="true">
+      <span class="orb orb-a"></span>
+      <span class="orb orb-b"></span>
+      <span class="orb orb-c"></span>
+      <span class="grain"></span>
+    </div>
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none">
+            <path d="M24 4 41 13.5v21L24 44 7 34.5v-21L24 4Z" stroke="currentColor" stroke-width="1.4" opacity=".65"/>
+            <path d="M24 10.5 35.5 17v14L24 37.5 12.5 31V17L24 10.5Z" fill="url(#brandGrad)" opacity=".2"/>
+            <path d="M18 16h12v3h-4v7h4v3H18v-3h4v-7h-4v-3Z" fill="currentColor"/>
+            <circle cx="24" cy="33.5" r="2.2" fill="currentColor"/>
+            <defs>
+              <linearGradient id="brandGrad" x1="12" y1="10" x2="36" y2="38" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#38bdf8"/><stop offset="1" stop-color="#6366f1"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="brand-copy">
+          <div class="brand-title">APEX <span>DYNO</span></div>
+          <div class="brand-sub">REAL-TIME ENGINE SIMULATOR</div>
+        </div>
+      </div>
+
+      <div class="preset-cluster">
+        <div class="cluster-label">ENGINE PRESET</div>
+        <div class="preset-switch" role="group" aria-label="Engine presets">
+          <button class="preset-btn active" data-preset="i4" type="button">
+            <span class="preset-kicker">NA</span>
+            <span class="preset-name">High-Rev I4</span>
+          </button>
+          <button class="preset-btn" data-preset="v6" type="button">
+            <span class="preset-kicker">TT</span>
+            <span class="preset-name">Twin-Turbo V6</span>
+          </button>
+          <button class="preset-btn" data-preset="v8" type="button">
+            <span class="preset-kicker">NA</span>
+            <span class="preset-name">Deep V8</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <div class="live-pill" id="livePill"><span class="live-dot"></span><span id="liveText">SIM LIVE</span></div>
+        <button class="audio-btn" id="audioToggle" type="button" aria-pressed="false">
+          <span class="audio-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 4V5L8 9H4Z" fill="currentColor"/><path class="wave-1" d="M16 8.5c1.2 1 1.2 6 0 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path class="wave-2" d="M19 6c2.2 2 2.2 10 0 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </span>
+          <span class="audio-label" id="audioLabel">AUDIO OFF</span>
+        </button>
+        <button class="ignition-btn" id="ignitionBtn" type="button" aria-pressed="true">
+          <span class="ignition-led"></span>
+          <span id="ignitionLabel">IGNITION ON</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <aside class="rail rail-left">
+        <section class="panel" data-panel="params">
+          <button class="panel-head" type="button" data-collapse aria-expanded="true">
+            <span class="panel-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h9M17 7h3M4 17h3M11 17h9M13 4v6M8 14v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="15" cy="7" r="2.2" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="17" r="2.2" stroke="currentColor" stroke-width="1.5"/></svg>
+            </span>
+            <span class="panel-title-wrap">
+              <span class="panel-title">Simulation Parameters</span>
+              <span class="panel-sub">Core operating state</span>
+            </span>
+            <span class="panel-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="panel-body">
+            <div class="panel-inner">
+              <div class="rpm-hero">
+                <div class="rpm-hero-top">
+                  <span class="field-label">ENGINE SPEED</span>
+                  <span class="rpm-hero-value"><strong id="rpmValue">850</strong><em>RPM</em></span>
+                </div>
+                <div class="rpm-track">
+                  <div class="rpm-fill" id="rpmFill"></div>
+                  <div class="rpm-redline" id="rpmRedlineMark"></div>
+                  <div class="rpm-ticks"></div>
+                </div>
+                <div class="rpm-meta"><span>500</span><span class="redline-label" id="redlineLabel">REDLINE 9000</span><span>10500</span></div>
+              </div>
+
+              <div class="control" data-control="rpm">
+                <div class="control-head"><label for="rpmInput">Target RPM</label><output id="rpmOut">6800</output></div>
+                <input id="rpmInput" class="range" type="range" min="500" max="10500" step="50" value="6800" aria-label="Target RPM">
+                <div class="range-scale"><span>IDLE</span><span>LIMITER</span></div>
+              </div>
+
+              <div class="control" data-control="throttle">
+                <div class="control-head"><label for="throttleInput">Throttle</label><output id="throttleOut">78%</output></div>
+                <input id="throttleInput" class="range" type="range" min="0" max="100" step="1" value="78" aria-label="Throttle">
+              </div>
+
+              <div class="control" data-control="load">
+                <div class="control-head"><label for="loadInput">Engine Load</label><output id="loadOut">84%</output></div>
+                <input id="loadInput" class="range" type="range" min="0" max="100" step="1" value="84" aria-label="Engine load">
+              </div>
+
+              <div class="control" data-control="compression">
+                <div class="control-head"><label for="compressionInput">Compression Ratio</label><output id="compressionOut">12.5:1</output></div>
+                <input id="compressionInput" class="range" type="range" min="6" max="14.5" step="0.1" value="12.5" aria-label="Compression ratio">
+              </div>
+
+              <div class="control" data-control="timing">
+                <div class="control-head"><label for="timingInput">Ignition Timing</label><output id="timingOut">29° BTDC</output></div>
+                <input id="timingInput" class="range" type="range" min="-10" max="45" step="0.5" value="29" aria-label="Ignition timing">
+              </div>
+
+              <div class="control" data-control="afr">
+                <div class="control-head"><label for="afrInput">Air / Fuel Ratio</label><output id="afrOut">12.8:1</output></div>
+                <input id="afrInput" class="range" type="range" min="9" max="18" step="0.1" value="12.8" aria-label="Air fuel ratio">
+              </div>
+
+              <div class="control" data-control="injection">
+                <div class="control-head"><label for="injectionInput">Injection Pulsation</label><output id="injectionOut">64%</output></div>
+                <input id="injectionInput" class="range" type="range" min="0" max="100" step="1" value="64" aria-label="Fuel injection pulsation">
+              </div>
+
+              <div class="panel-foot-row">
+                <button class="ghost-btn" id="resetBtn" type="button">RESET PRESET</button>
+                <span class="micro-note" id="presetNote">2.0L · INLINE-4</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="fluid">
+          <button class="panel-head" type="button" data-collapse aria-expanded="true">
+            <span class="panel-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M3 8c2.5-2 5.5-2 8 0s5.5 2 8 0M3 13c2.5-2 5.5-2 8 0s5.5 2 8 0M3 18c2.5-2 5.5-2 8 0s5.5 2 8 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+            <span class="panel-title-wrap">
+              <span class="panel-title">Fluid Dynamics</span>
+              <span class="panel-sub">Charge motion &amp; thermal flow</span>
+            </span>
+            <span class="panel-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="panel-body">
+            <div class="panel-inner">
+              <div class="switch-grid">
+                <button class="flow-switch active" data-flow="intake" type="button" aria-pressed="true">
+                  <span class="switch-dot intake"></span><span>Intake Flow</span><i></i>
+                </button>
+                <button class="flow-switch active" data-flow="combustion" type="button" aria-pressed="true">
+                  <span class="switch-dot combustion"></span><span>Combustion</span><i></i>
+                </button>
+                <button class="flow-switch active" data-flow="exhaust" type="button" aria-pressed="true">
+                  <span class="switch-dot exhaust"></span><span>Exhaust Flow</span><i></i>
+                </button>
+                <button class="flow-switch active" data-flow="thermal" type="button" aria-pressed="true">
+                  <span class="switch-dot thermal"></span><span>Thermal Map</span><i></i>
+                </button>
+              </div>
+
+              <div class="control compact" data-control="turbulence">
+                <div class="control-head"><label for="turbulenceInput">Turbulence</label><output id="turbulenceOut">68%</output></div>
+                <input id="turbulenceInput" class="range" type="range" min="0" max="100" step="1" value="68" aria-label="Turbulence">
+              </div>
+
+              <div class="control compact" data-control="density">
+                <div class="control-head"><label for="densityInput">Particle Density</label><output id="densityOut">72%</output></div>
+                <input id="densityInput" class="range" type="range" min="0" max="100" step="1" value="72" aria-label="Particle density">
+              </div>
+
+              <div class="legend-block">
+                <div class="legend-row"><span class="legend-swatch intake"></span><span>Intake charge</span><b>0.4 – 2.1 bar</b></div>
+                <div class="legend-row"><span class="legend-swatch combustion"></span><span>Flame front</span><b>900 – 2400 K</b></div>
+                <div class="legend-row"><span class="legend-swatch exhaust"></span><span>Exhaust gas</span><b>1.0 – 1.4 bar</b></div>
+              </div>
+              <div class="flow-readout">
+                <span>CHARGE VELOCITY</span>
+                <strong id="chargeVelocity">—</strong>
+                <em>m/s</em>
+              </div>
+            </div>
+          </div>
+        </section>
+      </aside>
+
+      <section class="stage" aria-label="Engine visualization">
+        <div class="stage-head">
+          <div class="engine-ident">
+            <div class="eyebrow"><span class="eyebrow-line"></span> LIVE CROSS-SECTION</div>
+            <h1 id="engineName">High-Revving I4</h1>
+            <div class="engine-spec" id="engineSpec">INLINE-4 · 2.0L · 9000 RPM REDLINE</div>
+          </div>
+          <div class="telemetry">
+            <div class="tach-block">
+              <div class="tach-number"><strong id="rpmBig">6800</strong><span>RPM</span></div>
+              <div class="tach-bar"><i id="tachFill"></i><b id="tachRedline"></b></div>
+            </div>
+            <div class="t-chip"><span>POWER</span><strong id="powerOut">0</strong><em>hp</em></div>
+            <div class="t-chip"><span>TORQUE</span><strong id="torqueOut">0</strong><em>Nm</em></div>
+            <div class="t-chip"><span>BMEP</span><strong id="bmepOut">0</strong><em>bar</em></div>
+          </div>
+        </div>
+
+        <div class="viewport" id="viewport">
+          <canvas id="engineCanvas" aria-label="Animated engine cross-section"></canvas>
+          <div class="viewport-overlay" aria-hidden="true">
+            <div class="vp-top-left">
+              <span class="vp-chip"><i class="vp-dot"></i><span id="vpLayout">INLINE-4</span></span>
+              <span class="vp-chip muted" id="vpConfig">4-STROKE · NA</span>
+            </div>
+            <div class="vp-top-right">
+              <span class="vp-label">CYCLE STATE</span>
+              <span class="vp-phase" id="vpPhase">INTAKE</span>
+            </div>
+            <div class="vp-legend">
+              <span><i class="lg intake"></i>INTAKE</span>
+              <span><i class="lg combustion"></i>COMBUSTION</span>
+              <span><i class="lg exhaust"></i>EXHAUST</span>
+              <span><i class="lg spark"></i>SPARK</span>
+            </div>
+            <div class="vp-bottom-right">
+              <span id="vpCrank">CRANK 000°</span>
+              <span id="vpAf">AFR 12.8</span>
+            </div>
+            <div class="phase-strip">
+              <div class="phase-seg" data-phase="intake"><b>01</b><span>INTAKE</span><i></i></div>
+              <div class="phase-seg" data-phase="compression"><b>02</b><span>COMPRESSION</span><i></i></div>
+              <div class="phase-seg" data-phase="power"><b>03</b><span>POWER</span><i></i></div>
+              <div class="phase-seg" data-phase="exhaust"><b>04</b><span>EXHAUST</span><i></i></div>
+            </div>
+          </div>
+          <div class="viewport-warning" id="viewportWarning"></div>
+          <div class="scanlines" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <aside class="rail rail-right">
+        <section class="panel" data-panel="acoustics">
+          <button class="panel-head" type="button" data-collapse aria-expanded="true">
+            <span class="panel-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 10v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </span>
+            <span class="panel-title-wrap">
+              <span class="panel-title">Acoustics</span>
+              <span class="panel-sub">Procedural engine synthesis</span>
+            </span>
+            <span class="panel-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="panel-body">
+            <div class="panel-inner">
+              <div class="audio-head-row">
+                <div class="audio-state" id="audioState"><span class="signal-bars"><i></i><i></i><i></i><i></i></span><span id="audioStateText">SIGNAL PREVIEW</span></div>
+                <div class="volume-wrap">
+                  <button class="mini-icon-btn" id="muteBtn" type="button" aria-label="Mute audio">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 4V5L8 9H4Z" fill="currentColor"/><path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                  </button>
+                  <input id="volumeInput" class="range tiny" type="range" min="0" max="100" step="1" value="70" aria-label="Master volume">
+                  <output id="volumeOut">70%</output>
+                </div>
+              </div>
+
+              <div class="viz-stack">
+                <div class="viz-block">
+                  <div class="viz-head"><span>OSCILLOSCOPE</span><b id="scopeMeta">—</b></div>
+                  <canvas id="scopeCanvas" aria-label="Audio waveform oscilloscope"></canvas>
+                </div>
+                <div class="viz-block">
+                  <div class="viz-head"><span>SPECTRUM / FFT</span><b id="fftMeta">2048 PT</b></div>
+                  <canvas id="spectrumCanvas" aria-label="Audio frequency spectrum"></canvas>
+                </div>
+              </div>
+
+              <div class="control compact" data-control="exhaustTone">
+                <div class="control-head"><label for="exhaustToneInput">Exhaust Resonance</label><output id="exhaustToneOut">60%</output></div>
+                <input id="exhaustToneInput" class="range" type="range" min="0" max="100" step="1" value="60" aria-label="Exhaust resonance">
+              </div>
+              <div class="control compact" data-control="intakeTone">
+                <div class="control-head"><label for="intakeToneInput">Intake Presence</label><output id="intakeToneOut">55%</output></div>
+                <input id="intakeToneInput" class="range" type="range" min="0" max="100" step="1" value="55" aria-label="Intake presence">
+              </div>
+
+              <div class="record-row">
+                <button class="record-btn" id="recordBtn" type="button">
+                  <span class="record-dot"></span>
+                  <span id="recordLabel">RECORD AUDIO</span>
+                </button>
+                <span class="record-time" id="recordTime">00:00</span>
+              </div>
+              <div class="micro-note center">WEB AUDIO · 48 kHz · PROCEDURAL</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="diagnostics">
+          <button class="panel-head" type="button" data-collapse aria-expanded="true">
+            <span class="panel-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 3 3.5 18h17L12 3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 9v4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="16.2" r="1" fill="currentColor"/></svg>
+            </span>
+            <span class="panel-title-wrap">
+              <span class="panel-title">Diagnostics</span>
+              <span class="panel-sub">Thermal &amp; mechanical health</span>
+            </span>
+            <span class="panel-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="panel-body">
+            <div class="panel-inner">
+              <div class="diag-grid">
+                <div class="diag-stat"><span>PEAK PRESSURE</span><strong id="peakPressure">—</strong><em>bar</em></div>
+                <div class="diag-stat"><span>VOLUMETRIC EFF.</span><strong id="volEff">—</strong><em>%</em></div>
+                <div class="diag-stat"><span>FRICTION LOSS</span><strong id="frictionLoss">—</strong><em>hp</em></div>
+                <div class="diag-stat"><span>OIL TEMP</span><strong id="oilTemp">—</strong><em>°C</em></div>
+              </div>
+
+              <div class="health-list">
+                <div class="health-row"><div class="health-top"><span>Valve Float</span><b id="valveFloatVal">0%</b></div><div class="health-track"><i id="valveFloatBar"></i></div></div>
+                <div class="health-row"><div class="health-top"><span>Piston Slap</span><b id="pistonSlapVal">0%</b></div><div class="health-track"><i id="pistonSlapBar"></i></div></div>
+                <div class="health-row"><div class="health-top"><span>Thermal Load</span><b id="thermalVal">0%</b></div><div class="health-track"><i id="thermalBar"></i></div></div>
+                <div class="health-row"><div class="health-top"><span>Detonation Risk</span><b id="detonationVal">0%</b></div><div class="health-track"><i id="detonationBar"></i></div></div>
+              </div>
+
+              <div class="warning-zone">
+                <div class="warning-title"><span>ACTIVE FLAGS</span><b id="warningCount">0</b></div>
+                <div class="warning-list" id="warningList"><span class="warning-empty">All systems nominal</span></div>
+              </div>
+
+              <div class="cyl-pressure">
+                <div class="cyl-pressure-head"><span>CYLINDER PRESSURE</span><b>bar</b></div>
+                <div class="cyl-bars" id="cylBars"></div>
+              </div>
+
+              <div class="diag-foot">
+                <span><i class="dot ok"></i><span id="healthText">NOMINAL</span></span>
+                <span id="cycleMeta">CYCLE 000°</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="statusbar">
+      <div class="status-left">
+        <span><i class="status-dot"></i>ENGINE MODEL <b>v2.4</b></span>
+        <span class="hide-sm">SOLVER <b>60 Hz</b></span>
+        <span class="hide-sm">AUDIO <b id="audioMeta">STANDBY</b></span>
+      </div>
+      <div class="status-right">
+        <span class="hide-md">SPACE IGNITION</span>
+        <span class="hide-md">M MUTE</span>
+        <span class="hide-md">R RECORD</span>
+        <span class="fps"><b id="fpsOut">60</b> FPS</span>
+      </div>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="audio-hint" id="audioHint"><span class="hint-pulse"></span>CLICK ANYWHERE TO ENABLE PROCEDURAL AUDIO</div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
