@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0b0d0e" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='none' stroke='%23d8ff3e' d='M20 2 38 20 20 38 2 20z'/%3E%3Ctext x='14' y='26' fill='%23d8ff3e' font-size='18' font-family='sans-serif'%3ER%3C/text%3E%3C/svg%3E" />
+<title>REDLINE — Engine Lab</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0d0e;--panel:#111516;--line:#272e2f;--muted:#75807f;--white:#e8ece8;--acid:#d8ff3e;--orange:#ff713d;--font:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--white);font-family:var(--font);font-size:13px}button{font:inherit;color:inherit}#app{height:100%;min-height:560px;display:grid;grid-template-rows:66px 1fr 78px;background:radial-gradient(ellipse at 48% 45%,#202627 0,#111516 45%,#0b0d0e 83%)}
+.topbar{z-index:3;display:flex;align-items:center;justify-content:space-between;padding:0 30px;border-bottom:1px solid #252b2c;background:#0b0d0ee8}.brand{display:flex;align-items:center;gap:12px;letter-spacing:.18em;font-weight:800;font-size:13px}.brand-mark{width:26px;height:26px;border:1px solid var(--acid);display:grid;place-items:center;color:var(--acid);font-size:12px;transform:rotate(45deg)}.brand-mark span{transform:rotate(-45deg)}.brand small{font-weight:500;letter-spacing:.12em;color:#818b89;margin-left:4px}.top-right{display:flex;align-items:center;gap:23px;color:#8f9997;font-size:10px;letter-spacing:.12em;text-transform:uppercase}.live{color:var(--acid);display:flex;align-items:center;gap:8px}.live i{width:6px;height:6px;border-radius:50%;background:var(--acid);box-shadow:0 0 12px var(--acid)}
+.workspace{position:relative;min-height:0;display:grid;grid-template-columns:258px minmax(0,1fr) 248px;padding:20px 24px 12px;gap:22px}.panel{position:relative;z-index:2;background:linear-gradient(145deg,#151a1aee,#101414e8);border:1px solid #2a3131;box-shadow:0 15px 50px #0003}.left-panel,.right-panel{align-self:center;padding:20px 18px}.eyebrow{font-size:9px;letter-spacing:.2em;color:#84908d;text-transform:uppercase}.panel-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.panel-heading strong{font-size:11px;letter-spacing:.13em;text-transform:uppercase}.tiny-pill{font-size:9px;color:#8a9693;border:1px solid #303939;padding:4px 7px;letter-spacing:.1em}.control-label{display:flex;justify-content:space-between;align-items:center;margin:20px 0 10px;color:#9ba5a2;font-size:10px;letter-spacing:.12em;text-transform:uppercase}.control-label b{color:#e5e9e5;font-size:11px;font-weight:600;letter-spacing:.04em}.range-wrap{position:relative;height:21px;display:flex;align-items:center}.range-wrap input{appearance:none;width:100%;height:3px;background:linear-gradient(90deg,var(--acid) 0%,var(--acid) var(--fill,0%),#363e3e var(--fill,0%),#363e3e 100%);outline:none}.range-wrap input::-webkit-slider-thumb{appearance:none;width:13px;height:13px;background:var(--acid);border:3px solid #202620;border-radius:50%;box-shadow:0 0 0 1px var(--acid);cursor:pointer}.range-wrap input::-moz-range-thumb{width:9px;height:9px;background:var(--acid);border:2px solid #202620;border-radius:50%;cursor:pointer}.range-ends{display:flex;justify-content:space-between;color:#5e6967;font-size:9px;letter-spacing:.08em;margin-top:3px}.mode-select{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:7px}.mode-select button{height:31px;border:1px solid #333b3a;background:#111515;color:#77817f;font-size:9px;letter-spacing:.12em;cursor:pointer}.mode-select button.active{border-color:#95ae37;color:var(--acid);background:#222a15}.toggle-row{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:16px;border-top:1px solid #262d2c;color:#aab2af;font-size:10px;letter-spacing:.08em}.switch{width:31px;height:17px;border-radius:12px;background:#35403e;position:relative;cursor:pointer;border:0;padding:0}.switch:after{content:"";position:absolute;top:3px;left:3px;width:11px;height:11px;border-radius:50%;background:#a2aeaa;transition:.2s}.switch.on{background:#758b27}.switch.on:after{left:17px;background:var(--acid)}
+.stage{position:relative;min-width:0;min-height:0;overflow:hidden}.stage:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 49%,#3f494531,transparent 58%);pointer-events:none}.stage canvas{width:100%;height:100%;display:block;touch-action:none}.scene-caption{position:absolute;z-index:1;left:24px;top:21px;pointer-events:none}.scene-caption .eyebrow{color:#77827f}.scene-caption h1{font-size:18px;letter-spacing:.12em;margin:8px 0 5px;font-weight:600}.scene-caption p{font-size:10px;color:#808a87;margin:0;letter-spacing:.1em}.drag-hint{position:absolute;right:22px;top:22px;font-size:9px;color:#606a68;letter-spacing:.12em;text-transform:uppercase}.scene-foot{position:absolute;bottom:15px;left:23px;right:23px;display:flex;justify-content:space-between;align-items:flex-end;pointer-events:none}.specs{display:flex;gap:20px;color:#6e7976;font-size:9px;letter-spacing:.12em;text-transform:uppercase}.specs b{display:block;color:#b9c1bd;font-size:11px;letter-spacing:.08em;margin-bottom:4px;font-weight:500}.view-buttons{display:flex;gap:5px;pointer-events:auto}.view-buttons button{width:27px;height:25px;border:1px solid #343b3a;background:#111515;color:#8d9794;font-size:9px;cursor:pointer}.view-buttons button:hover,.view-buttons button.active{color:var(--acid);border-color:#849733}
+.readout{padding:15px 0;border-bottom:1px solid #28302f}.readout:first-of-type{padding-top:0}.readout:last-child{border:0;padding-bottom:0}.readout-title{font-size:9px;letter-spacing:.14em;color:#7f8987;text-transform:uppercase;display:flex;justify-content:space-between}.readout-value{display:flex;align-items:baseline;gap:7px;margin-top:8px}.readout-value strong{font-size:28px;font-weight:500;letter-spacing:-.04em;font-variant-numeric:tabular-nums}.readout-value span{font-size:10px;color:#808a87;letter-spacing:.08em}.rpm-bar{height:3px;background:#333c39;margin-top:10px;position:relative}.rpm-bar i{display:block;height:100%;width:4%;background:var(--acid);box-shadow:0 0 10px #d8ff3e88;transition:width .12s}.load-track{display:flex;gap:3px;margin-top:10px}.load-track i{height:4px;flex:1;background:#303735}.load-track i.lit{background:#b4d938}.status{display:flex;align-items:center;gap:8px;color:#a2ada9;font-size:10px;letter-spacing:.1em}.status i{width:6px;height:6px;border-radius:50%;background:#626b68}.status.running i{background:var(--acid);box-shadow:0 0 9px var(--acid)}.temp-read{color:var(--orange)!important}.temp-line{height:2px;background:#3a312d;margin-top:11px}.temp-line i{display:block;width:34%;height:100%;background:var(--orange)}
+.bottom{z-index:3;border-top:1px solid #252c2c;background:#0d1010;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 30px}.bottom-meta{font-size:9px;color:#77817e;letter-spacing:.16em;text-transform:uppercase}.bottom-meta strong{color:#bec6c2;font-weight:500}.transport{display:flex;align-items:center;gap:15px}.start-button{height:43px;min-width:170px;padding:0 23px;border:1px solid var(--acid);background:var(--acid);color:#141810;font-size:10px;font-weight:800;letter-spacing:.16em;cursor:pointer;transition:.18s}.start-button:hover{background:#ebff9b;box-shadow:0 0 25px #d8ff3e35}.start-button.running{background:transparent;color:var(--acid)}.start-button .icon{font-size:12px;margin-right:8px}.small-action{height:36px;width:38px;border:1px solid #303837;background:#111515;color:#a2adaa;cursor:pointer;font-size:12px}.small-action:hover{border-color:#849733;color:var(--acid)}.bottom-right{justify-self:end;display:flex;align-items:center;gap:9px;color:#8d9794;font-size:9px;letter-spacing:.1em}.sound-indicator{width:7px;height:7px;border-radius:50%;background:#515b58}.sound-indicator.active{background:var(--acid);box-shadow:0 0 8px var(--acid)}.toast{position:absolute;left:50%;bottom:96px;transform:translate(-50%,10px);z-index:5;padding:9px 13px;background:#1a2118;border:1px solid #526326;color:#d9eda5;font-size:10px;letter-spacing:.08em;opacity:0;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:980px){.workspace{grid-template-columns:220px minmax(0,1fr);padding:14px;gap:14px}.right-panel{display:none}.stage{grid-column:2;grid-row:1}.left-panel{padding:16px 14px}.scene-caption{left:14px}.scene-foot{left:14px;right:14px}.specs{gap:12px}.workspace{padding-bottom:10px}}
+@media(max-width:650px){#app{min-height:600px;grid-template-rows:54px 1fr 72px}.topbar{padding:0 16px}.top-right{gap:10px;font-size:8px}.top-right .top-extra{display:none}.brand{font-size:11px}.workspace{display:flex;flex-direction:column;padding:0;gap:0}.stage{order:0;flex:1;min-height:260px}.left-panel{order:1;align-self:stretch;border-left:0;border-right:0;border-bottom:0;padding:11px 16px 13px;display:grid;grid-template-columns:1fr 1fr;column-gap:18px}.left-panel .panel-heading{grid-column:1/-1;margin-bottom:0}.left-panel .control-label{margin:10px 0 5px}.left-panel .range-ends{display:none}.left-panel .range-wrap{height:15px}.left-panel .mode-select{margin-top:5px}.left-panel .toggle-row{margin-top:8px;padding-top:9px}.left-panel .toggle-row:nth-last-child(-n+2){display:none}.scene-caption{top:12px}.scene-caption h1{font-size:14px}.scene-caption p{font-size:8px}.drag-hint{top:14px;right:12px;font-size:8px}.scene-foot{bottom:9px}.specs{gap:9px;font-size:7px}.specs b{font-size:9px}.view-buttons{display:none}.bottom{padding:0 12px;grid-template-columns:1fr auto}.bottom-meta{display:none}.transport{gap:7px}.start-button{min-width:132px;height:40px;padding:0 12px;font-size:9px}.small-action{width:34px}.bottom-right{font-size:8px}.toast{bottom:82px;white-space:nowrap}}
+</style>
+</head>
+<body>
+<div id="app">
+<header class="topbar"><div class="brand"><div class="brand-mark"><span>R</span></div>REDLINE <small>ENGINE LAB</small></div><div class="top-right"><span class="top-extra">SIMULATION SUITE&nbsp; / &nbsp;01</span><span class="live"><i></i> LIVE SYSTEM</span></div></header>
+<main class="workspace">
+<aside class="panel left-panel">
+ <div class="panel-heading"><strong>Engine controls</strong><span class="tiny-pill">V8 / 5.2L</span></div>
+ <div><div class="control-label"><span>Throttle</span><b id="throttleText">0%</b></div><div class="range-wrap"><input id="throttle" aria-label="Throttle" type="range" min="0" max="100" value="0"></div><div class="range-ends"><span>IDLE</span><span>WIDE OPEN</span></div></div>
+ <div><div class="control-label"><span>Mixture</span><b id="mixtureText">STOICH</b></div><div class="range-wrap"><input id="mixture" aria-label="Air fuel mixture" type="range" min="0" max="100" value="50"></div><div class="range-ends"><span>LEAN</span><span>RICH</span></div></div>
+ <div><div class="control-label"><span>Exhaust</span><b id="exhaustText">OPEN</b></div><div class="mode-select"><button class="active" data-exhaust="open">OPEN</button><button data-exhaust="muffled">MUFFLED</button></div></div>
+ <div><div class="control-label"><span>Induction</span><b id="inductionText">NATURAL</b></div><div class="mode-select"><button class="active" data-induction="na">NATURAL</button><button data-induction="turbo">TURBO</button></div></div>
+ <div class="toggle-row"><span>FLUID FLOW VISUALIZER</span><button class="switch on" id="flowToggle" aria-label="Toggle fluid flow"></button></div>
+ <div class="toggle-row"><span>CYLINDER CUTAWAY</span><button class="switch on" id="cutawayToggle" aria-label="Toggle cutaway"></button></div>
+</aside>
+<section class="stage" aria-label="Interactive 3D engine simulation">
+ <div class="scene-caption"><div class="eyebrow">LIVE 3D SIMULATION &nbsp;·&nbsp; REAL-TIME</div><h1>V8 POWERTRAIN</h1><p>DUAL OVERHEAD CAM &nbsp; / &nbsp; CROSS-PLANE CRANK</p></div><div class="drag-hint">DRAG TO ORBIT &nbsp; · &nbsp; SCROLL TO ZOOM</div>
+ <div class="scene-foot"><div class="specs"><div><b>90°</b>CYLINDER BANK</div><div><b>5,204 CC</b>DISPLACEMENT</div><div><b id="boostSpec">1.0 BAR</b>MANIFOLD</div></div><div class="view-buttons"><button class="active" data-view="front">FR</button><button data-view="top">TOP</button><button data-view="side">SIDE</button><button data-view="reset">↺</button></div></div>
+</section>
+<aside class="panel right-panel">
+ <div class="panel-heading"><strong>Telemetry</strong><span class="tiny-pill">●&nbsp; STREAMING</span></div>
+ <div class="readout"><div class="readout-title"><span>Engine speed</span><span>RPM</span></div><div class="readout-value"><strong id="rpmValue">0000</strong><span>rpm</span></div><div class="rpm-bar"><i id="rpmBar"></i></div></div>
+ <div class="readout"><div class="readout-title"><span>Output</span><span>EST. POWER</span></div><div class="readout-value"><strong id="powerValue">000</strong><span>HP</span></div><div class="load-track" id="loadTrack"></div></div>
+ <div class="readout"><div class="readout-title"><span>Oil temperature</span><span>°C</span></div><div class="readout-value"><strong class="temp-read" id="tempValue">24</strong><span>°C</span></div><div class="temp-line"><i id="tempBar"></i></div></div>
+ <div class="readout"><div class="readout-title"><span>System state</span></div><div class="readout-value"><div class="status" id="engineStatus"><i></i><span>ENGINE OFFLINE</span></div></div></div>
+</aside>
+</main>
+<footer class="bottom"><div class="bottom-meta"><strong>SIMULATION</strong> &nbsp; / &nbsp; BUILD 02.4.1</div><div class="transport"><button class="small-action" id="ignition" aria-label="Ignition" title="Ignition">⏻</button><button class="start-button" id="startButton"><span class="icon">▶</span>START ENGINE</button><button class="small-action" id="revButton" aria-label="Rev engine" title="Quick rev">↗</button></div><div class="bottom-right"><i class="sound-indicator" id="soundIndicator"></i><span id="soundText">AUDIO STANDBY</span></div></footer>
+<div class="toast" id="toast">IGNITION ON — START ENGINE TO BEGIN</div>
+</div>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const stage=$('.stage'), scene=new THREE.Scene();
+scene.background=new THREE.Color('#111516');
+const camera=new THREE.PerspectiveCamera(36,1,.1,100);camera.position.set(6.7,4.2,8.2);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;stage.prepend(renderer.domElement);
+scene.add(new THREE.HemisphereLight('#d5e0dc','#171b19',2.2));
+const key=new THREE.DirectionalLight('#fff1d2',4.0);key.position.set(4,8,6);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.camera.left=-6;key.shadow.camera.right=6;key.shadow.camera.top=6;key.shadow.camera.bottom=-6;scene.add(key);
+const rim=new THREE.DirectionalLight('#6d9c9b',2.5);rim.position.set(-5,3,-4);scene.add(rim);
+const spot=new THREE.PointLight('#d6ff55',30,8);spot.position.set(-2,3,2);scene.add(spot);
+const mat=(color,metalness=.5,roughness=.35,extra={})=>new THREE.MeshStandardMaterial({color,metalness,roughness,...extra});
+const aluminum=mat('#aeb6b4',.83,.27), darkmetal=mat('#303838',.8,.33), black=mat('#111717',.45,.36), gold=mat('#bd8d4a',.78,.24), rubber=mat('#161a19',.05,.82), red=mat('#b84631',.45,.32), acid=mat('#d5f43c',.48,.24,{emissive:'#405b0b',emissiveIntensity:.3}), copper=mat('#bc6542',.7,.3);
+const engine=new THREE.Group();scene.add(engine);
+const box=(parent,w,h,d,material,x=0,y=0,z=0,bevel=0)=>{let mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh};
+const cyl=(parent,r1,r2,h,material,x=0,y=0,z=0,seg=32)=>{let mesh=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,seg),material);mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh};
+const sphere=(parent,r,material,x,y,z,scale=1)=>{let m=new THREE.Mesh(new THREE.SphereGeometry(r,16,12),material);m.position.set(x,y,z);m.scale.setScalar(scale);m.castShadow=true;parent.add(m);return m};
+const rodMesh=(parent,rA,rB,material)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(rB,rA,1,12),material);m.castShadow=true;parent.add(m);return m};
+const between=(mesh,a,b)=>{a=new THREE.Vector3(...a);b=new THREE.Vector3(...b);mesh.position.copy(a).add(b).multiplyScalar(.5);mesh.scale.y=a.distanceTo(b);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),b.sub(a).normalize())};
+// Crankcase and deep finned V-block
+box(engine,1.46,1.05,3.55,darkmetal,0,.08,0);
+box(engine,1.54,.19,3.62,aluminum,0,-.48,0);box(engine,1.72,.25,3.72,black,0,-.68,0);
+for(let i=0;i<9;i++)box(engine,1.58,.025,3.7,darkmetal,0,-.36+i*.035,0);
+// Oil sump, fasteners, casting ribs
+box(engine,1.18,.32,2.4,black,0,-.91,0);box(engine,.72,.08,1.12,aluminum,0,-1.11,0);
+for(const side of [-1,1]){for(let z=-1.52;z<=1.53;z+=.38){cyl(engine,.045,.045,.04,gold,side*.73,.52,z,12);cyl(engine,.03,.03,.025,black,side*.73,.52,z,12)}for(let i=0;i<5;i++)box(engine,.045,.72,.035,aluminum,side*.75,-.02,-1.35+i*.67);}
+// Block banks: detailed cylinder liners, moving pistons, twin overhead cam covers
+const banks=[];const pistonAssemblies=[];
+for(const side of [-1,1]){
+ const bank=new THREE.Group();bank.position.set(side*.47,.35,0);bank.rotation.z=-side*.47;engine.add(bank);banks.push(bank);
+ const block=box(bank,.91,1.48,3.58,darkmetal,0,.7,0);block.material=darkmetal;
+ // Head casting, long rocker cover and distinctive bevel-like bands
+ box(bank,.86,.27,3.62,aluminum,0,1.43,0);box(bank,.73,.32,3.37,black,0,1.68,0);
+ box(bank,.62,.20,3.24,red,0,1.85,0);box(bank,.51,.055,2.94,darkmetal,0,1.98,0);
+ for(const x of [-.22,.22]){const cam=cyl(bank,.13,.13,2.9,gold,x,1.73,0,20);cam.rotation.x=Math.PI/2;for(let n=0;n<8;n++){const lobe=cyl(bank,.17,.17,.11,aluminum,x,1.73,-1.24+n*.355,18);lobe.rotation.x=Math.PI/2}}
+ for(let ci=0;ci<4;ci++){
+  const z=-1.35+ci*.9;
+  const sleeve=cyl(bank,.305,.305,1.1,aluminum,0,.73,z,32);sleeve.material=new THREE.MeshStandardMaterial({color:'#899392',metalness:.85,roughness:.22,side:THREE.DoubleSide});
+  cyl(bank,.265,.265,.035,black,0,1.29,z,32);cyl(bank,.23,.23,.06,gold,0,1.32,z,32);
+  const piston=new THREE.Group();bank.add(piston);
+  cyl(piston,.235,.245,.21,aluminum,0,0,0,32);cyl(piston,.239,.239,.027,black,0,.08,0,32);cyl(piston,.238,.238,.025,black,0,.04,0,32);
+  // crown dish and wrist pin
+  cyl(piston,.19,.22,.025,mat('#c5c6b8',.72,.28),0,.12,0,32);
+  const pin=cyl(piston,.047,.047,.52,gold,.0,-.02,0,16);pin.rotation.z=Math.PI/2;
+  const conrod=rodMesh(bank,.06,.105,gold);const conrodCap=cyl(bank,.11,.11,.14,darkmetal,0,0,0,20);
+  pistonAssemblies.push({bank,piston,conrod,conrodCap,side,z,phase:ci*Math.PI+ (side<0?Math.PI:0)});
+  // Combustion bowl and valve details
+  cyl(bank,.045,.045,.22,copper,side*.21,1.49,z-.17,12);cyl(bank,.045,.045,.22,copper,-side*.21,1.49,z+.17,12);
+  for(const vz of [z-.29,z+.29])sphere(bank,.035,acid,0,1.47,vz,.7);
+ }
+ // Intake runners, matched header tubes, metal flange strips
+ for(let n=0;n<4;n++){
+  const z=-1.28+n*.85;
+  const intake=new THREE.CatmullRomCurve3([new THREE.Vector3(0,1.32,z),new THREE.Vector3(side*.22,1.16,z),new THREE.Vector3(side*.4,1.02,z),new THREE.Vector3(side*.48,.86,z)]);
+  const tube=new THREE.Mesh(new THREE.TubeGeometry(intake,16,.055,10,false),aluminum);tube.castShadow=true;bank.add(tube);
+  const exhaust=new THREE.CatmullRomCurve3([new THREE.Vector3(0,.27,z),new THREE.Vector3(side*.35,.05,z),new THREE.Vector3(side*.56,-.1,z),new THREE.Vector3(side*.63,-.35,z),new THREE.Vector3(side*.72,-.5,z)]);
+  const hdr=new THREE.Mesh(new THREE.TubeGeometry(exhaust,20,.052,10,false),copper);hdr.castShadow=true;bank.add(hdr);
+ }
+}
+// Intake plenum, throttle body, filter and fuel rail
+box(engine,.82,.33,2.72,aluminum,0,2.16,0);box(engine,.7,.1,2.55,black,0,2.37,0);
+for(let z=-1.12;z<=1.13;z+=.32){cyl(engine,.075,.075,.34,aluminum,0,2.56,z,24);cyl(engine,.05,.05,.025,gold,0,2.73,z,20)}
+cyl(engine,.27,.25,.48,aluminum,0,2.42,1.56,36).rotation.x=Math.PI/2;
+cyl(engine,.18,.18,.09,black,0,2.42,1.85,36).rotation.x=Math.PI/2;
+// Front pulleys and belt
+for(let i=0;i<3;i++){let p=cyl(engine,.4-i*.075,.4-i*.075,.14, i===1?gold:darkmetal,0,.08,1.94+i*.12,40);p.rotation.x=Math.PI/2;for(let j=0;j<12;j++){let a=j*Math.PI/6;sphere(engine,.025,aluminum,Math.cos(a)*(.4-i*.075),.08+Math.sin(a)*(.4-i*.075),1.96+i*.12,.75)}}
+const belt=cyl(engine,.49,.49,.07,rubber,0,.08,1.86,64);belt.rotation.x=Math.PI/2;
+// Crankshaft, journals and flywheel
+const crank=cyl(engine,.12,.12,3.25,gold,0,-.18,0,32);crank.rotation.x=Math.PI/2;
+for(let z=-1.32;z<=1.33;z+=.44){let w=cyl(engine,.24,.24,.16,aluminum,0,-.18,z,32);w.rotation.x=Math.PI/2;let throwpin=cyl(engine,.1,.1,.18,gold,.15,-.18,z+.08,20);throwpin.rotation.x=Math.PI/2;}
+let flywheel=cyl(engine,.72,.72,.24,darkmetal,0,-.18,-1.88,64);flywheel.rotation.x=Math.PI/2;
+let ring=cyl(engine,.73,.73,.055,gold,0,-.18,-2.015,64);ring.rotation.x=Math.PI/2;
+// Spark plug wires and ignition coils
+for(const side of [-1,1])for(let i=0;i<4;i++){const z=-1.25+i*.83;let wireCurve=new THREE.CatmullRomCurve3([new THREE.Vector3(side*.48,1.98,z),new THREE.Vector3(side*.68,2.15,z),new THREE.Vector3(side*.76,1.85,z+.08)]);let wire=new THREE.Mesh(new THREE.TubeGeometry(wireCurve,14,.025,8,false),rubber);engine.add(wire);}
+// Animated translucent combustion and exhaust flow particles
+const flowMat=new THREE.MeshBasicMaterial({color:'#c6ff6a',transparent:true,opacity:.8, blending:THREE.AdditiveBlending,depthWrite:false});
+const exhaustMat=new THREE.MeshBasicMaterial({color:'#ff8252',transparent:true,opacity:.75,blending:THREE.AdditiveBlending,depthWrite:false});
+const particles=[];
+for(let i=0;i<64;i++){const m=new THREE.Mesh(new THREE.SphereGeometry(.025+Math.random()*.025,8,6),i%3?flowMat:exhaustMat);engine.add(m);particles.push({mesh:m,bank:i%2?1:0,cyl:(i>>1)%4,t:Math.random(),exhaust:i%4===0,phase:Math.random()*6.28});}
+// Dramatic studio floor, circular pads and calibration grid
+const floor=new THREE.Mesh(new THREE.CircleGeometry(5,80),mat('#161b1b',.35,.72));floor.rotation.x=-Math.PI/2;floor.position.y=-1.42;floor.receiveShadow=true;scene.add(floor);
+const grid=new THREE.GridHelper(12,40,'#303a38','#202827');grid.position.y=-1.405;grid.material.transparent=true;grid.material.opacity=.32;scene.add(grid);
+const pad=new THREE.Mesh(new THREE.CylinderGeometry(2.95,3.15,.12,80),mat('#252c2b',.72,.35));pad.position.y=-1.36;pad.receiveShadow=true;pad.castShadow=true;scene.add(pad);
+const halo=new THREE.Mesh(new THREE.TorusGeometry(2.88,.012,8,120),new THREE.MeshBasicMaterial({color:'#77883a'}));halo.rotation.x=Math.PI/2;halo.position.y=-1.285;scene.add(halo);
+// Subtle technical guide ticks around display
+for(let i=0;i<48;i++){const a=i/48*Math.PI*2;const tick=new THREE.Mesh(new THREE.BoxGeometry(i%4===0?.12:.055,.008,.012),mat(i%4===0?'#69765a':'#424b48',.3,.6));tick.position.set(Math.cos(a)*3.35,-1.27,Math.sin(a)*3.35);tick.rotation.y=-a;scene.add(tick)}
+
+let orbit={theta:.69,phi:1.13,radius:8.55,targetY:.35,drag:false,x:0,y:0};
+function setCamera(){const t=orbit.theta,p=THREE.MathUtils.clamp(orbit.phi,.32,1.48),r=orbit.radius;camera.position.set(r*Math.sin(p)*Math.sin(t),orbit.targetY+r*Math.cos(p),r*Math.sin(p)*Math.cos(t));camera.lookAt(0,.35,0)}setCamera();
+const resize=()=>{const r=stage.getBoundingClientRect();if(!r.width||!r.height)return;renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix()};new ResizeObserver(resize).observe(stage);resize();
+renderer.domElement.addEventListener('pointerdown',e=>{orbit.drag=true;orbit.x=e.clientX;orbit.y=e.clientY;renderer.domElement.setPointerCapture(e.pointerId)});
+renderer.domElement.addEventListener('pointermove',e=>{if(!orbit.drag)return;orbit.theta-=(e.clientX-orbit.x)*.006;orbit.phi+=(e.clientY-orbit.y)*.005;orbit.x=e.clientX;orbit.y=e.clientY;setCamera()});
+renderer.domElement.addEventListener('pointerup',()=>orbit.drag=false);renderer.domElement.addEventListener('wheel',e=>{orbit.radius=THREE.MathUtils.clamp(orbit.radius+e.deltaY*.006,5.4,12);setCamera()},{passive:true});
+
+let running=false, ignitionOn=true, flowOn=true, cutawayOn=true, turbo=false, muffled=false, throttle=0, mixture=50, rpm=0, revKick=0;
+let audio=null, audioNodes=null, lastTime=performance.now(), elapsed=0, toastTimer;
+function makeNoise(ctx){const buffer=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=Math.random()*2-1;return buffer}
+function startAudio(){if(audio)return;const ctx=new AudioContext(), master=ctx.createGain();master.gain.value=.0001;master.connect(ctx.destination);
+ const low=ctx.createBiquadFilter();low.type='lowpass';low.frequency.value=1300;low.Q.value=.8;low.connect(master);
+ const distortion=ctx.createWaveShaper();const curve=new Float32Array(512);for(let i=0;i<512;i++){const x=i*2/511-1;curve[i]=Math.tanh(x*2.7)}distortion.curve=curve;distortion.oversample='2x';distortion.connect(low);
+ const mix=ctx.createGain();mix.gain.value=.8;mix.connect(distortion);
+ const fundamental=ctx.createOscillator();fundamental.type='sawtooth';fundamental.frequency.value=32;const engineGain=ctx.createGain();engineGain.gain.value=.3;fundamental.connect(engineGain);engineGain.connect(mix);fundamental.start();
+ const sub=ctx.createOscillator();sub.type='triangle';sub.frequency.value=16;const subGain=ctx.createGain();subGain.gain.value=.5;sub.connect(subGain);subGain.connect(mix);sub.start();
+ const harmonics=[];for(const [mul,gain] of [[2,.19],[3,.095],[4,.05]]){const o=ctx.createOscillator(),g=ctx.createGain();o.type='sawtooth';o.frequency.value=32*mul;g.gain.value=gain;o.connect(g);g.connect(mix);o.start();harmonics.push({o,mul})}
+ const noise=ctx.createBufferSource();noise.buffer=makeNoise(ctx);noise.loop=true;const noiseFilter=ctx.createBiquadFilter();noiseFilter.type='bandpass';noiseFilter.frequency.value=240;noiseFilter.Q.value=.8;const ng=ctx.createGain();ng.gain.value=.07;noise.connect(noiseFilter);noiseFilter.connect(ng);ng.connect(distortion);noise.start();
+ const turboOsc=ctx.createOscillator();turboOsc.type='sine';turboOsc.frequency.value=850;const turboFilter=ctx.createBiquadFilter();turboFilter.type='bandpass';turboFilter.frequency.value=2200;turboFilter.Q.value=3;const tg=ctx.createGain();tg.gain.value=0;turboOsc.connect(turboFilter);turboFilter.connect(tg);tg.connect(low);turboOsc.start();
+ audio={ctx,master};audioNodes={fundamental,sub,harmonics,engineGain,subGain,noiseFilter,ng,tg,turboOsc,low};
+}
+function setAudioActive(active){if(active){startAudio();audio.ctx.resume();audioNodes.master?.gain?.setTargetAtTime(.72,audio.ctx.currentTime,.12);audio.master.gain.setTargetAtTime(.72,audio.ctx.currentTime,.12);$('#soundIndicator').classList.add('active');$('#soundText').textContent='AUDIO LIVE'}else if(audio){audio.master.gain.setTargetAtTime(.0001,audio.ctx.currentTime,.22);$('#soundIndicator').classList.remove('active');$('#soundText').textContent='AUDIO STANDBY'}}
+function showToast(message){const t=$('#toast');t.textContent=message;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2100)}
+function updateSlider(el,value){const min=+el.min,max=+el.max;el.style.setProperty('--fill',`${(value-min)/(max-min)*100}%`)}
+$('#throttle').addEventListener('input',e=>{throttle=+e.target.value;$('#throttleText').textContent=`${throttle}%`;updateSlider(e.target,throttle)});
+$('#mixture').addEventListener('input',e=>{mixture=+e.target.value;$('#mixtureText').textContent=mixture<42?'LEAN':mixture>58?'RICH':'STOICH';updateSlider(e.target,mixture)});
+updateSlider($('#throttle'),0);updateSlider($('#mixture'),50);
+$('#startButton').addEventListener('click',()=>{if(!ignitionOn){ignitionOn=true;showToast('IGNITION ON — START ENGINE TO BEGIN');$('#engineStatus span').textContent='IGNITION READY';$('#engineStatus').classList.remove('running');return}running=!running;if(running){setAudioActive(true);rpm=Math.max(rpm,760);$('#startButton').classList.add('running');$('#startButton').innerHTML='<span class="icon">■</span>STOP ENGINE';$('#engineStatus span').textContent='ENGINE RUNNING';$('#engineStatus').classList.add('running')}else{$('#startButton').classList.remove('running');$('#startButton').innerHTML='<span class="icon">▶</span>START ENGINE';$('#engineStatus span').textContent='ENGINE OFFLINE';$('#engineStatus').classList.remove('running');throttle=0;$('#throttle').value=0;$('#throttleText').textContent='0%';updateSlider($('#throttle'),0);setAudioActive(false)}});
+$('#ignition').addEventListener('click',()=>{ignitionOn=!ignitionOn;if(!ignitionOn&&running)$('#startButton').click();if(!ignitionOn){$('#engineStatus span').textContent='IGNITION OFF';showToast('IGNITION CIRCUIT DISABLED')}else{$('#engineStatus span').textContent='IGNITION READY';showToast('IGNITION CIRCUIT ARMED')}});
+$('#revButton').addEventListener('click',()=>{if(!running){showToast('START ENGINE TO REV');return}revKick=1;throttle=Math.max(throttle,28);$('#throttle').value=throttle;$('#throttleText').textContent=`${throttle}%`;updateSlider($('#throttle'),throttle);setTimeout(()=>{if(running){throttle=0;$('#throttle').value=0;$('#throttleText').textContent='0%';updateSlider($('#throttle'),0)}},780)});
+$$('[data-exhaust]').forEach(b=>b.addEventListener('click',()=>{$$('[data-exhaust]').forEach(x=>x.classList.toggle('active',x===b));muffled=b.dataset.exhaust==='muffled';$('#exhaustText').textContent=muffled?'MUFFLED':'OPEN';if(audio)audioNodes.low.frequency.setTargetAtTime(muffled?520:1300,audio.ctx.currentTime,.2)}));
+$$('[data-induction]').forEach(b=>b.addEventListener('click',()=>{$$('[data-induction]').forEach(x=>x.classList.toggle('active',x===b));turbo=b.dataset.induction==='turbo';$('#inductionText').textContent=turbo?'TURBO':'NATURAL';$('#boostSpec').textContent=turbo?'1.8 BAR':'1.0 BAR';if(!turbo&&audio)audioNodes.tg.gain.setTargetAtTime(0,audio.ctx.currentTime,.18);showToast(turbo?'TURBOCHARGER ENGAGED':'NATURALLY ASPIRATED')}));
+$('#flowToggle').addEventListener('click',e=>{flowOn=!flowOn;e.currentTarget.classList.toggle('on',flowOn);showToast(flowOn?'FLUID FLOW VISUALIZER ON':'FLUID FLOW VISUALIZER OFF')});
+$('#cutawayToggle').addEventListener('click',e=>{cutawayOn=!cutawayOn;e.currentTarget.classList.toggle('on',cutawayOn);banks.forEach(b=>b.children.forEach(c=>{if(c.geometry?.type==='CylinderGeometry'&&c.material===aluminum)c.visible=cutawayOn}));showToast(cutawayOn?'CYLINDER CUTAWAY VISIBLE':'CYLINDER CUTAWAY CLOSED')});
+$$('[data-view]').forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.view;if(v==='reset'){orbit.theta=.69;orbit.phi=1.13;orbit.radius=8.55}else if(v==='front'){orbit.theta=.05;orbit.phi=1.18;orbit.radius=8.55}else if(v==='top'){orbit.theta=.15;orbit.phi=.35;orbit.radius=9.6}else if(v==='side'){orbit.theta=1.55;orbit.phi=1.18;orbit.radius=8.4}setCamera();$$('[data-view]').forEach(x=>x.classList.toggle('active',x===b))}));
+for(let i=0;i<12;i++){const led=sphere(engine,.045,acid,-.34,2.1,-1.28+i*.23,.7);led.material=led.material.clone();led.material.emissiveIntensity=.08}
+const loadTrack=$('#loadTrack');for(let i=0;i<12;i++)loadTrack.append(document.createElement('i'));
+let uiElapsed=0;
+function animate(now){requestAnimationFrame(animate);const dt=Math.min(.05,(now-lastTime)/1000);lastTime=now;elapsed+=dt;
+ const target=running?760+throttle*62:0;const kick=revKick*1300;rpm=THREE.MathUtils.damp(rpm,target+kick, running?2.3:3.3,dt);revKick=Math.max(0,revKick-dt*1.35);
+ const phase=elapsed*Math.PI*2*Math.max(rpm,100)/60;
+ for(const a of pistonAssemblies){const angle=phase+a.phase,travel=.29*Math.cos(angle);a.piston.position.set(0,.52+travel,a.z);between(a.conrod,[a.side*.12,-.18,a.z+.08],[a.side*.09,.37+travel,a.z]);a.conrodCap.position.set(a.side*.12,-.18,a.z+.08);a.conrodCap.rotation.x=Math.PI/2;}
+ crank.rotation.z=phase; belt.rotation.z=phase;engine.children.forEach(c=>{if(c.geometry?.type==='CylinderGeometry'&&c.position.y===.08&&c.position.z>1.8)c.rotation.z=phase*.75});
+ for(let i=0;i<particles.length;i++){const p=particles[i],bank=banks[p.bank],cylZ=-1.35+p.cyl*.9,cycle=(p.t+elapsed*(rpm/60)*.19)%1;let pt;if(p.exhaust){const x=(p.bank===0?-1:1);pt=new THREE.Vector3(x*(.65+cycle*.85),-.13+Math.sin(cycle*6+p.phase)*.05,cylZ+cycle*.42)}else{pt=new THREE.Vector3((p.bank===0?-1:1)*(.18+Math.sin(p.phase+elapsed*2)*.08),.92+cycle*.42,cylZ)}
+  bank.localToWorld(pt);p.mesh.position.copy(pt);const pulse=running?(.5+.5*Math.sin(phase*.5+p.phase)):0.22;p.mesh.scale.setScalar((p.exhaust?.75:1)*(.45+pulse));p.mesh.visible=flowOn&&running;}
+ // Throttle needle, cyclic combustion, thermal rise and realistic load estimate
+ const load=running?Math.min(1,throttle/100*.82+.13):0;const hp=running?Math.round(Math.max(0,(rpm-600)/5600*510*(.27+load*.73)*(turbo?1.19:1))):0;
+ const temp=24+(running?Math.min(68,elapsed*1.25+throttle*.16):0);
+ if(audio&&running){const ctx=audio.ctx,firing=Math.max(18,rpm/15);audioNodes.fundamental.frequency.setTargetAtTime(firing,ctx.currentTime,.045);audioNodes.sub.frequency.setTargetAtTime(firing*.5,ctx.currentTime,.05);audioNodes.harmonics.forEach(h=>h.o.frequency.setTargetAtTime(firing*h.mul,ctx.currentTime,.04));audioNodes.engineGain.gain.setTargetAtTime(.22+throttle*.002,ctx.currentTime,.08);audioNodes.noiseFilter.frequency.setTargetAtTime(170+throttle*7,ctx.currentTime,.08);audioNodes.ng.gain.setTargetAtTime(.045+throttle*.0015,ctx.currentTime,.09);audioNodes.turboOsc.frequency.setTargetAtTime(700+Math.max(0,rpm-1800)*.62,ctx.currentTime,.08);audioNodes.tg.gain.setTargetAtTime(turbo?Math.min(.16,Math.max(0,rpm-1000)/15000):0,ctx.currentTime,.15);audioNodes.low.frequency.setTargetAtTime(muffled?520:1300,ctx.currentTime,.2)}
+ uiElapsed+=dt;if(uiElapsed>.1){uiElapsed=0;$('#rpmValue').textContent=String(Math.round(rpm/10)*10).padStart(4,'0');$('#rpmBar').style.width=`${Math.min(100,rpm/65)}%`;
+ $('#powerValue').textContent=String(hp).padStart(3,'0');$('#tempValue').textContent=String(Math.round(temp));$('#tempBar').style.width=`${Math.min(95,18+temp*.72)}%`;
+ [...loadTrack.children].forEach((el,i)=>el.classList.toggle('lit',i<Math.round(load*12)));}
+ renderer.render(scene,camera);
+}
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>
