@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#dce8ee" />
+  <title>Север — Winter Run</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="game-shell">
+    <canvas id="world" aria-label="Side-view snowy road driving game"></canvas>
+    <div class="sky-grain"></div>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Sever home"><span class="brand-mark">С</span><span><strong>СЕВЕР</strong><small>WINTER RUN <i> / </i> 01</small></span></a>
+      <div class="route-chip"><span class="live-dot"></span><span>RURAL HIGHWAY</span><b>●</b><span id="weather">−12° C&nbsp; · &nbsp;LIGHT SNOW</span></div>
+      <button class="sound-button" id="soundToggle" aria-label="Toggle sound" title="Toggle engine sound"><span class="sound-bars"><i></i><i></i><i></i><i></i></span><span>SOUND <b id="soundState">OFF</b></span></button>
+    </header>
+
+    <section class="telemetry-panel glass" aria-label="Vehicle telemetry">
+      <div class="panel-heading"><span>VEHICLE SYSTEMS</span><span class="system-status"><i></i> NOMINAL</span></div>
+      <div class="vehicle-id"><div class="mini-car">▰</div><div><strong>UAZ PATRIOT</strong><small>2.7L INLINE-4 <span>·</span> AWD</small></div><div class="year">'24</div></div>
+      <div class="telemetry-grid">
+        <div class="metric"><span class="metric-label">ENGINE TEMP.</span><div><strong id="engineTemp">78</strong><small>°C</small></div><div class="meter"><i id="engineMeter"></i></div></div>
+        <div class="metric"><span class="metric-label">COOLANT</span><div><strong id="coolantTemp">72</strong><small>°C</small></div><div class="meter"><i id="coolantMeter"></i></div></div>
+        <div class="metric"><span class="metric-label">OIL PRESSURE</span><div><strong id="oilPressure">2.8</strong><small>BAR</small></div><div class="meter"><i id="oilMeter"></i></div></div>
+        <div class="metric"><span class="metric-label">BATTERY</span><div><strong id="battery">14.2</strong><small>V</small></div><div class="meter"><i id="batteryMeter"></i></div></div>
+      </div>
+      <div class="fuel-row"><div class="fuel-icon">◉</div><div class="fuel-info"><span>FUEL LEVEL</span><strong id="fuelText">84%</strong></div><div class="fuel-track"><i id="fuelMeter"></i></div><div class="fuel-unit">AI-92</div></div>
+      <div class="telemetry-foot"><span>OUTSIDE <b>−12° C</b></span><span>ODO <b id="odometer">000.0 KM</b></span></div>
+    </section>
+
+    <div class="right-stack">
+      <div class="compass glass"><span class="compass-label">HEADING</span><div class="compass-dial"><span>N</span><i></i><b>NE</b><em></em></div><strong id="heading">042°</strong></div>
+      <div class="trip-card glass"><span>TRIP DISTANCE</span><strong><b id="distance">0.00</b><small> KM</small></strong><div class="trip-line"><i></i></div><small class="trip-caption">NO DESTINATION · FREEDRIVE</small></div>
+    </div>
+
+    <div class="location-tag"><span class="location-icon">⌖</span><span><b>ARKHANGELSK OBLAST</b><small>RUSSIA · 64°32'N 40°32'E</small></span></div>
+    <div class="road-note"><span class="note-line"></span><span>Р-1&nbsp; / &nbsp;THE OLD NORTH ROAD</span><span class="note-dot"></span></div>
+
+    <section class="dashboard" aria-label="Driving instruments">
+      <div class="dash-left"><div class="gear-block"><span>GEAR</span><strong id="gear">D</strong><small id="driveMode">AUTO</small></div><div class="dash-divider"></div><div class="drive-state"><span class="state-icon">❄</span><div><b id="tractionLabel">SNOW MODE</b><small id="tractionStatus">TRACTION CONTROL ON</small></div></div></div>
+      <div class="speed-block"><div class="speed-readout"><strong id="speed">0</strong><span>km/h</span></div><span class="speed-caption">GROUND SPEED <i></i></span></div>
+      <div class="rpm-block"><div class="rpm-head"><span>ENGINE RPM</span><strong><b id="rpm">850</b> <small>RPM</small></strong></div><div class="rpm-scale"><div class="rpm-ticks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="rpm-progress" id="rpmProgress"></div><div class="redline"></div></div><div class="rpm-numbers"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div></div>
+      <div class="dash-right"><div class="light-indicator"><i></i><span>LOW BEAM</span></div><div class="assist"><span>ABS</span><b>ON</b></div><button class="reset-button" id="resetButton" title="Reset vehicle (R)">↺ <span>RESET</span></button></div>
+    </section>
+    <div class="control-hint"><span>W <i>↑</i> GAS</span><span>S <i>↓</i> BRAKE</span><span>A D <i>← →</i> BALANCE</span><span class="hint-sep"></span><span>R RESET</span></div>
+    <div class="mobile-controls"><button data-control="brake" aria-label="Brake">−</button><button data-control="gas" aria-label="Accelerate">+</button><div class="mobile-steer"><button data-control="left" aria-label="Lean left">‹</button><button data-control="right" aria-label="Lean right">›</button></div></div>
+    <div class="toast" id="toast">BELT UP · HAVE A SAFE DRIVE</div>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
